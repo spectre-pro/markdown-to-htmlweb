@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Server目錄</title>
+  <!-- 因為 'src' 已被設為靜態目錄，所以可以直接從根路徑引用 main.css -->
+  <link rel="stylesheet" href="/main.css">
+</head>
+<body>
+  <main id="content">
+    <!-- Markdown 內容將載入於此 -->
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const contentElement = document.getElementById('content');
+
+      function loadMarkdown() {
+        contentElement.innerHTML = '正在載入中...';
+        fetch('/api/markdown')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP 錯誤! 狀態: ${response.status}`);
+            }
+            return response.text();
+          })
+          .then(html => {
+            contentElement.innerHTML = html;
+          })
+          .catch(error => {
+            console.error('載入 Markdown 失敗:', error);
+            contentElement.innerHTML = `<div style="color: red;"><strong>內容載入失敗。</strong><br>請檢查伺服器控制台和 'content.md' 檔案是否存在。</div>`;
+          });
+      }
+
+      // 首次載入
+      loadMarkdown();
+    });
+  </script>
+</body>
+</html>
